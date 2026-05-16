@@ -1,0 +1,137 @@
+{
+  "episode": "02",
+  "display_id": "#02",
+  "source_episode": "episode_000006_000000_000050_000070",
+  "original_episode": "episode_000006_000000_000050_000070",
+  "source_split": "imagined_kf0_to_kf1",
+  "source_method": "kf1_frustum_reveal",
+  "thumbnail": "thumbs/02.png",
+  "input_image": "thumbs/02.png",
+  "source_layers": {
+    "manifest": "scenes/02/source_manifest.json"
+  },
+  "geometry_filter": {
+    "name": "loose_sparse_neighbor",
+    "label": "Loose sparse-neighbor filter",
+    "input_vertices": 131072,
+    "kept_vertices": 130194,
+    "removed_vertices": 878,
+    "opacity_threshold": 0.0
+  },
+  "frustum_slicing": {
+    "definition": "all non-kf1-only Gaussians are shown as observed; kf1-only frustum Gaussians are revealed",
+    "reveal_order": "distance outside kf0 normalized image/depth bounds, near boundary first",
+    "scene_idx": 6,
+    "kf0_idx": 0,
+    "kf1_idx": 50,
+    "kf2_idx": 70,
+    "base_vertices": 109826,
+    "reveal_vertices": 20368,
+    "inside_kf0_vertices": 109826,
+    "inside_kf1_vertices": 100310
+  },
+  "default_step": 0,
+  "steps": [
+    {
+      "index": 0,
+      "quantile": 0.0,
+      "frontier_outside_score_threshold": null,
+      "base_vertices": 109826,
+      "reveal_vertices": 0,
+      "total_vertices": 109826,
+      "ply": "scenes/02/step_00.ply"
+    },
+    {
+      "index": 1,
+      "quantile": 0.14,
+      "frontier_outside_score_threshold": 0.04919713735580444,
+      "base_vertices": 109826,
+      "reveal_vertices": 2852,
+      "total_vertices": 112678,
+      "ply": "scenes/02/step_01.ply"
+    },
+    {
+      "index": 2,
+      "quantile": 0.24,
+      "frontier_outside_score_threshold": 0.0906682014465332,
+      "base_vertices": 109826,
+      "reveal_vertices": 4889,
+      "total_vertices": 114715,
+      "ply": "scenes/02/step_02.ply"
+    },
+    {
+      "index": 3,
+      "quantile": 0.34,
+      "frontier_outside_score_threshold": 0.14110618829727173,
+      "base_vertices": 109826,
+      "reveal_vertices": 6926,
+      "total_vertices": 116752,
+      "ply": "scenes/02/step_03.ply"
+    },
+    {
+      "index": 4,
+      "quantile": 0.44,
+      "frontier_outside_score_threshold": 0.19884341955184937,
+      "base_vertices": 109826,
+      "reveal_vertices": 8962,
+      "total_vertices": 118788,
+      "ply": "scenes/02/step_04.ply"
+    },
+    {
+      "index": 5,
+      "quantile": 0.54,
+      "frontier_outside_score_threshold": 0.25114309787750244,
+      "base_vertices": 109826,
+      "reveal_vertices": 10999,
+      "total_vertices": 120825,
+      "ply": "scenes/02/step_05.ply"
+    },
+    {
+      "index": 6,
+      "quantile": 0.64,
+      "frontier_outside_score_threshold": 0.30691641569137573,
+      "base_vertices": 109826,
+      "reveal_vertices": 13036,
+      "total_vertices": 122862,
+      "ply": "scenes/02/step_06.ply"
+    },
+    {
+      "index": 7,
+      "quantile": 0.74,
+      "frontier_outside_score_threshold": 0.37297511100769043,
+      "base_vertices": 109826,
+      "reveal_vertices": 15073,
+      "total_vertices": 124899,
+      "ply": "scenes/02/step_07.ply"
+    },
+    {
+      "index": 8,
+      "quantile": 0.84,
+      "frontier_outside_score_threshold": 0.450578510761261,
+      "base_vertices": 109826,
+      "reveal_vertices": 17110,
+      "total_vertices": 126936,
+      "ply": "scenes/02/step_08.ply"
+    },
+    {
+      "index": 9,
+      "quantile": 1.0,
+      "frontier_outside_score_threshold": 0.7554799318313599,
+      "base_vertices": 109826,
+      "reveal_vertices": 20368,
+      "total_vertices": 130194,
+      "ply": "scenes/02/step_09.ply"
+    }
+  ],
+  "object_permanence": {
+    "mode": "none"
+  },
+  "gaussian_export_filters": {
+    "opacity_thresh": 0.0,
+    "max_count": 0,
+    "max_scale": 0.0,
+    "voxel_size": 0.0,
+    "min_voxel_count": 1
+  },
+  "model_checkpoint_name": "model-91.pt"
+}

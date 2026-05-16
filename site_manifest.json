@@ -1,0 +1,117 @@
+{
+  "title": "3D-Belief Interactive Gaussian Reveal Demo",
+  "cache_version": "gallery_v36_simplified_layout",
+  "entry_points": [
+    "index.html",
+    "gallery_slider.html"
+  ],
+  "config": "config.json",
+  "layout": {
+    "root_config": "config.json",
+    "thumbnails": "thumbs/<scene_id>.png",
+    "scenes": "scenes/<scene_id>/config.json and scenes/<scene_id>/step_XX.ply",
+    "source_manifests": "scenes/<scene_id>/source_manifest.json",
+    "pose_defaults": "viewer/pose_defaults.json keyed by <scene_id>"
+  },
+  "external_dependencies": {
+    "gsplat": "https://cdn.jsdelivr.net/npm/gsplat@latest"
+  },
+  "episodes": [
+    {
+      "display_id": "#01",
+      "scene_id": "01",
+      "source_episode": "episode_000840_000000_000057_000059",
+      "thumbnail": "thumbs/01.png",
+      "config": "scenes/01/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#02",
+      "scene_id": "02",
+      "source_episode": "episode_000006_000000_000050_000070",
+      "thumbnail": "thumbs/02.png",
+      "config": "scenes/02/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#03",
+      "scene_id": "03",
+      "source_episode": "episode_000938_000000_000053_000059",
+      "thumbnail": "thumbs/03.png",
+      "config": "scenes/03/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#04",
+      "scene_id": "04",
+      "source_episode": "episode_000452_000050_000095_000109",
+      "thumbnail": "thumbs/04.png",
+      "config": "scenes/04/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#05",
+      "scene_id": "05",
+      "source_episode": "episode_000238_000000_000044_000059",
+      "thumbnail": "thumbs/05.png",
+      "config": "scenes/05/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#06",
+      "scene_id": "06",
+      "source_episode": "episode_000048_000000_000052_000079",
+      "thumbnail": "thumbs/06.png",
+      "config": "scenes/06/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#07",
+      "scene_id": "07",
+      "source_episode": "episode_000181_000000_000050_000079",
+      "thumbnail": "thumbs/07.png",
+      "config": "scenes/07/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#08",
+      "scene_id": "08",
+      "source_episode": "episode_000754_000000_000057_000079",
+      "thumbnail": "thumbs/08.png",
+      "config": "scenes/08/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#09",
+      "scene_id": "09",
+      "source_episode": "episode_000034_000000_000058_000079",
+      "thumbnail": "thumbs/09.png",
+      "config": "scenes/09/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#10",
+      "scene_id": "10",
+      "source_episode": "episode_000829_000000_000043_000059",
+      "thumbnail": "thumbs/10.png",
+      "config": "scenes/10/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#11",
+      "scene_id": "11",
+      "source_episode": "episode_000798_000134_000179_000193",
+      "thumbnail": "thumbs/11.png",
+      "config": "scenes/11/config.json",
+      "step_count": 10
+    },
+    {
+      "display_id": "#12",
+      "scene_id": "12",
+      "source_episode": "episode_000288_000000_000038_000059",
+      "thumbnail": "thumbs/12.png",
+      "config": "scenes/12/config.json",
+      "step_count": 10
+    }
+  ]
+}

@@ -1,627 +1,440 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta
-      name="description"
-      content="3D-Belief is a 3D generative world model for embodied agent's mental simulation"
-    />
-    <meta name="keywords" content="3D-Belief, Embodied Agent, Mental Simulation" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>
-      Embodied Belief Inference via Generative 3D World Modeling
-    </title>
-
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-96FM6LQE7G"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", "G-96FM6LQE7G");
-    </script>
-
-    <link
-      href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-      rel="stylesheet"
-    />
-
-    <link rel="stylesheet" href="./static/css/bulma.min.css" />
-    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css" />
-    <link rel="stylesheet" href="./static/css/bulma-slider.min.css" />
-    <link rel="stylesheet" href="./static/css/fontawesome.all.min.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
-    />
-    <link rel="stylesheet" href="./static/css/index.css" />
-    <link rel="icon" href="./static/images/3d-belief.png" />
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script defer src="./static/js/fontawesome.all.min.js"></script>
-    <script src="./static/js/bulma-carousel.min.js"></script>
-    <script src="./static/js/bulma-slider.min.js"></script>
-    <script src="./static/js/index.js"></script>
-    <script
-      id="MathJax-script"
-      async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-    ></script>
+    <title>3D-Belief Interactive Reveal Results</title>
     <style>
-      /* Apply Fancy Fonts */
-      h1,
-      h2.title {
-        font-family: "Cinzel", serif;
-        font-weight: 700;
+      :root {
+        color-scheme: light;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #ffffff;
+        color: #111111;
       }
 
-      h3.subtitle,
-      h5.title {
-        font-family: "Playfair Display", serif;
-        font-weight: 400;
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #ffffff;
+      }
+
+      .results {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        --input-col-width: max(220px, 26vw);
+        --viewer-col-width: calc(100vw - var(--input-col-width));
+        --selector-width: min(760px, calc(var(--viewer-col-width) - 96px));
+        background: #ffffff;
+      }
+
+      .demo-stage {
+        min-height: 0;
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: var(--input-col-width) minmax(0, 1fr);
+        gap: 0;
+        background: #000000;
+      }
+
+      .input-screen {
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
+        border-right: 1px solid #1a1a1a;
+        background: #f7f7f7;
+      }
+
+      .input-frame {
+        position: relative;
+        width: 100%;
+        max-width: min(360px, 100%);
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #111111;
+        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.18);
+      }
+
+      .input-frame img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .input-badge {
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        padding: 2px 7px;
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0.62);
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.3;
+      }
+
+      .iframe-wrapper {
+        min-width: 0;
+        min-height: 0;
+        padding: 0;
+        background: #000000;
+      }
+
+      iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #000000;
+      }
+
+      .results-selector {
+        position: relative;
+        flex: 0 0 auto;
+        width: var(--selector-width);
+        --thumbnail-strip-width: 100%;
+        margin-left: calc(var(--input-col-width) + (var(--viewer-col-width) - var(--selector-width)) / 2);
+        margin-right: 0;
+        padding: 5px 0 8px;
+        background: #ffffff;
+      }
+
+      .reveal-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 10px;
+        width: min(560px, 100%);
+        margin: 0 auto 5px;
+        color: #303030;
+        font-size: clamp(11px, 0.9vw, 13px);
+        line-height: 1.1;
+      }
+
+      .demo-id {
+        display: none;
+        min-width: 30px;
+        color: #6b6b6b;
+        font-size: 11px;
+        font-weight: 700;
+        text-align: right;
+        letter-spacing: 0;
+      }
+
+      .reveal-row span {
+        white-space: nowrap;
+      }
+
+      .reveal-row input[type="range"] {
+        width: 100%;
+        accent-color: #111111;
+        cursor: pointer;
+      }
+
+      .viewer-instructions {
+        display: flex;
+        justify-content: center;
+        gap: clamp(16px, 3vw, 34px);
+        padding: 1px 0 7px;
+        color: #202020;
+        font-size: clamp(12px, 1vw, 15px);
+        line-height: 1.1;
+        white-space: nowrap;
+      }
+
+      .viewer-instructions span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .viewer-instructions strong {
+        font-weight: 800;
+      }
+
+      .viewer-instructions svg {
+        width: 1em;
+        height: 1em;
+        stroke: currentColor;
+        stroke-width: 2.2;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .results-thumbnails {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-start;
+        overflow-x: auto;
+        width: var(--thumbnail-strip-width);
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 2px;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+      }
+
+      .results-thumbnails button {
+        position: relative;
+        display: block;
+        flex: 0 0 auto;
+        width: 68px;
+        height: 68px;
+        padding: 0;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        opacity: 0.55;
+        cursor: pointer;
+        transition: opacity 140ms ease, border-color 140ms ease, transform 140ms ease;
+      }
+
+      .results-thumbnails button:hover {
+        opacity: 0.88;
+      }
+
+      .results-thumbnails button[aria-pressed="true"] {
+        border-color: #111111;
+        opacity: 1;
+      }
+
+      .results-thumbnails img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 6px;
+        object-fit: cover;
+        background: #000000;
+      }
+
+      .thumb-id {
+        position: absolute;
+        left: 4px;
+        bottom: 4px;
+        min-width: 22px;
+        padding: 1px 4px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.58);
+        color: #ffffff;
+        font-size: 9px;
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: 0;
+        pointer-events: none;
+      }
+
+      .results-thumbnails button.previous-demo .thumb-id {
+        background: rgba(0, 0, 0, 0.72);
+      }
+
+      .results-thumbnails button.previous-demo-separator {
+        margin-right: 12px;
+      }
+
+      .results-thumbnails button.previous-demo-separator::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: -13px;
+        width: 1px;
+        height: 52px;
+        background: #d9d9d9;
+      }
+
+      .results-prev,
+      .results-next {
+        position: absolute;
+        top: calc(50% + 16px);
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border: 1px solid #d7d7d7;
+        border-radius: 999px;
+        background: #ffffff;
+        color: #111111;
+        font: inherit;
+        font-size: 25px;
+        line-height: 28px;
+        cursor: pointer;
+        transform: translateY(-50%);
+      }
+
+      .results-prev {
+        left: calc((100% - var(--thumbnail-strip-width)) / 2 - 46px);
+      }
+
+      .results-next {
+        right: calc((100% - var(--thumbnail-strip-width)) / 2 - 46px);
+      }
+
+      .results-prev:hover,
+      .results-next:hover {
+        background: #f1f1f1;
+      }
+
+      @media (max-width: 760px) {
+        .results {
+          --input-col-width: 0px;
+          --viewer-col-width: 100vw;
+          --selector-width: calc(100vw - 58px);
+        }
+
+        .demo-stage {
+          grid-template-columns: 1fr;
+          grid-template-rows: minmax(150px, 32vh) minmax(0, 1fr);
+        }
+
+        .input-screen {
+          padding: 8px;
+          border-right: 0;
+          border-bottom: 1px solid #1a1a1a;
+        }
+
+        .input-frame {
+          max-width: min(210px, 70vw);
+          border-radius: 7px;
+        }
+
+        .results-selector {
+          width: var(--selector-width);
+          margin: 0 auto;
+          padding: 7px 0 8px;
+        }
+
+        .reveal-row {
+          gap: 7px;
+          margin-bottom: 4px;
+          font-size: 11px;
+        }
+
+        .demo-id {
+          min-width: 24px;
+          font-size: 10px;
+        }
+
+        .viewer-instructions {
+          gap: 10px;
+          padding-bottom: 5px;
+          font-size: 11px;
+        }
+
+        .viewer-instructions span {
+          gap: 4px;
+        }
+
+        .results-thumbnails {
+          gap: 8px;
+        }
+
+        .results-thumbnails button {
+          width: 56px;
+          height: 56px;
+          border-radius: 7px;
+        }
+
+        .thumb-id {
+          left: 3px;
+          bottom: 3px;
+          min-width: 20px;
+          font-size: 8px;
+        }
+
+        .results-thumbnails button.previous-demo-separator {
+          margin-right: 8px;
+        }
+
+        .results-thumbnails button.previous-demo-separator::after {
+          right: -9px;
+          height: 44px;
+        }
+
+        .results-prev,
+        .results-next {
+          width: 28px;
+          height: 28px;
+          font-size: 21px;
+          line-height: 22px;
+        }
+
+        .results-prev {
+          left: -34px;
+        }
+
+        .results-next {
+          right: -34px;
+        }
       }
     </style>
   </head>
   <body>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-      <div class="navbar-brand">
-        <a
-          role="button"
-          class="navbar-burger"
-          aria-label="menu"
-          aria-expanded="false"
-        >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
-    </nav>
-
-    <section class="hero">
-      <div class="hero-body">
-        <div class="container is-max-desktop">
-          <div class="columns is-centered">
-            <div class="column has-text-centered">
-              <h1 class="title is-1 publication-title" style="display: flex; align-items: center; justify-content: center; gap: 0.0em;">
-                <img src="./static/images/logo.png" alt="3D-Belief Logo" style="height: 2.6em; width: auto; object-fit: contain; flex-shrink: 0;" />
-                <span>3D-Belief: Embodied Belief Inference via Generative 3D World Modeling</span>
-              </h1>
-              <div class="is-size-5 publication-authors">
-                <a href="https://yifanyin11.github.io" class="author-link">Yifan Yin<sup>1</sup>, </a>
-                <a href="https://zehaowen.com/" class="author-link">Zehao Wen<sup>1</sup>, </a>
-                <a href="https://beckschen.github.io/" class="author-link">Jieneng Chen<sup>1</sup>, </a>
-                <a href="https://dyfcalid.github.io/" class="author-link">Zehan Zheng<sup>1</sup>, </a>
-                <a href="https://www.linkedin.com/in/nanru-dai-8b33a9261/" class="author-link">Nanru Dai<sup>1</sup>, </a>
-                <a href="https://www.linkedin.com/in/haojun-shi-746b3328b/" class="author-link">Haojun Shi<sup>1</sup>, </a>
-                <a href="https://www.linkedin.com/in/suyu-ye/" class="author-link">Suyu Ye<sup>1</sup>, </a>
-                <a href="https://www.linkedin.com/in/aydan-huang-hyn26533554432/" class="author-link">Aydan Huang<sup>1</sup>, </a>
-                <a href="https://zheyuanzhang.me/" class="author-link">Zheyuan Zhang<sup>1</sup>, </a>
-                <a href="https://www.cs.jhu.edu/~ayuille/" class="author-link">Alan Yuille<sup>1</sup>, </a>
-                <a href="http://www.stat.ucla.edu/~jxie/" class="author-link">Jianwen Xie<sup>2</sup>, </a>
-                <a href="https://ayushtewari.com/" class="author-link">Ayush Tewari<sup>3</sup>, </a>
-                <a href="https://www.tshu.io/index.html" class="author-link">Tianmin Shu<sup>1</sup></a>
-
-                <div style="margin-top: 0.6rem;"></div>
-
-                <div class="is-size-5 publication-authors" style="line-height: 1.4;">
-                  <span><sup>1</sup>Johns Hopkins University</span>,
-                  <span><sup>2</sup>Lambda</span>,
-                  <span><sup>3</sup>University of Cambridge</span>
-                </div>
-
-                <div style="margin-top: 1rem;"></div>
-              </div>
-              <!-- <h2 class="subtitle is-4 publication-authors" style="margin-bottom: 0;">
-                Robotics: Science and Systems (RSS) 2025
-              </h2> -->
-              <h2 class="subtitle is-5 publication-authors" style="margin-top: 0;">
-                
-              </h2>
-              <div class="is-size-5 publication-authors">
-                <!-- Publication Links -->
-                <div class="column has-text-centered">
-                  <div class="publication-links">
-                    <span class="link-block">
-                      <a
-                        href=""
-                        class="external-link button is-normal is-rounded is-dark"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <span class="icon">
-                          <i class="fas fa-file-pdf"></i>
-                        </span>
-                        <span>Paper</span>
-                      </a>
-                    </span>
-                    <span class="link-block">
-                      <a
-                        href=""
-                        class="external-link button is-normal is-rounded is-dark"
-                      >
-                        <span class="icon">
-                          <i class="fab fa-youtube"></i>
-                        </span>
-                        <span>Video</span>
-                      </a>
-                    </span>
-                    <span class="link-block">
-                      <a
-                        href="https://github.com/3D-Belief/3d-belief.git"
-                        class="external-link button is-normal is-rounded is-dark"
-                      >
-                        <span class="icon">
-                          <i class="fab fa-github"></i>
-                        </span>
-                        <span>Code</span>
-                      </a>
-                    </span>
-                    <span class="link-block">
-                      <a
-                        href="https://huggingface.co/datasets/SCAI-JHU/3d-belief"
-                        class="external-link button is-normal is-rounded is-dark"
-                      >
-                        <span class="icon">
-                          <i class="far fa-images"></i>
-                        </span>
-                        <span>Models</span>
-                      </a>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <main class="results">
+      <div class="demo-stage">
+        <aside class="input-screen" aria-label="Input image">
+          <div class="input-frame">
+            <img id="input-image" alt="" />
+            <span class="input-badge">Input</span>
           </div>
+        </aside>
+        <div class="iframe-wrapper"></div>
+      </div>
+      <div class="results-selector">
+        <div class="reveal-row" aria-label="Reveal imagined Gaussians">
+          <span id="demo-id" class="demo-id">#01</span>
+          <span>Observed</span>
+          <input id="reveal-slider" type="range" min="0" max="10" step="1" value="0" />
+          <span>Imagined</span>
         </div>
-      </div>
-    </section>
-
-    <section class="hero teaser">
-      <div class="container is-max-desktop">
-        <div class="content has-text-justified">
-          <div class="video-container">
-            <video autoplay controls muted loop playsinline width="100%">
-              <source
-                src="./static/videos/teaser.mp4"
-                type="video/mp4"
-              />
-            </video>
-          </div>
+        <div class="viewer-instructions" aria-label="Viewer controls">
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 12c3.4-5.2 11.8-5.2 15.2-.4" />
+              <path d="M18.2 7.5v4.1h-4.1" />
+            </svg>
+            <strong>Left-click</strong> and drag to rotate
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2v20" />
+              <path d="M12 2l-3 3" />
+              <path d="M12 2l3 3" />
+              <path d="M12 22l-3-3" />
+              <path d="M12 22l3-3" />
+              <path d="M2 12h20" />
+              <path d="M2 12l3-3" />
+              <path d="M2 12l3 3" />
+              <path d="M22 12l-3-3" />
+              <path d="M22 12l-3 3" />
+            </svg>
+            <strong>Right-click</strong> and drag or <strong>WASD</strong> to move
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M16.5 16.5L21 21" />
+            </svg>
+            <strong>Scroll</strong> to zoom
+          </span>
         </div>
+        <button class="results-prev" type="button" aria-label="Previous episode">&lsaquo;</button>
+        <div class="results-thumbnails" aria-label="Episodes"></div>
+        <button class="results-next" type="button" aria-label="Next episode">&rsaquo;</button>
       </div>
-    </section>
-
-    <!-- Abstract Section -->
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered has-text-centered">
-          <div class="column is-four-fifths">
-            <h2 class="title is-3">Abstract</h2>
-            <div class="content has-text-justified">
-              <p>
-                Recent advances in visual generative models have highlighted the promise of learning generative world models.
-                However, most existing approaches frame world modeling as novel-view synthesis or future-frame prediction, emphasizing visual realism rather than the structured uncertainty required by embodied agents acting under partial observability.
-                In this work, we propose a different perspective: world modeling as embodied belief inference in 3D space.
-                From this view, a world model should not merely render what may be seen, but maintain and update an agent's belief about the unobserved 3D world as new observations are acquired.
-                We identify several key capabilities for such models, including spatially consistent scene memory, multi-hypothesis belief sampling, sequential belief updating, and semantically informed prediction of unseen regions.
-                We instantiate these ideas in 3D-Belief, a generative 3D world model that infers explicit, actionable 3D beliefs from partial observations and updates them online over time.
-                Unlike prior visual prediction models, 3D-Belief represents uncertainty directly in 3D, enabling embodied agents to imagine plausible scene completions and reason over partially observed environments.
-                We evaluate 3D-Belief on 2D visual quality for scene memory and unobserved-scene imagination, object- and scene-level 3D imagination using our proposed 3D-CORE benchmark, and challenging object navigation tasks in both simulation and the real world.
-                Experiments show that 3D-Belief improves 2D and 3D imagination quality and downstream embodied task performance compared to state-of-the-art methods.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Key Capabilities of a 3D Belief Model -->
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-full-width">
-            <h2 class="title is-3">Core Capabilities of 3D Belief Models</h2>
-            <div class="content has-text-justified">
-              <p>
-                There remains a substantial gap between what previous visual generative models are trained to do and what a world model must provide for embodied decision making under partial observability. 
-                We theorize that robust embodied agents require a generative belief model that has the following key capacities.
-              </p>
-            </div>
-
-            <!-- 1) Multi-hypothesis belief sampling -->
-            <h3 class="title is-4" style="margin-top: 1.25rem;">Multi-hypothesis Belief Sampling</h3>
-            <video
-              class="capabilities-video"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            >
-              <source src="./static/videos/capabilities-multi.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-
-            <!-- 2) Sequential belief updating -->
-            <h3 class="title is-4" style="margin-top: 2rem;">Sequential Belief Updating</h3>
-            <video
-              class="capabilities-video"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            >
-              <source src="./static/videos/capabilities-seq.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-
-            <!-- 3) Spatially consistent scene memory -->
-            <h3 class="title is-4" style="margin-top: 2rem;">Spatially Consistent Scene Memory</h3>
-            <video
-              class="capabilities-video"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            >
-              <source src="./static/videos/capabilities-memory.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-
-            <!-- 4) Semantically informed future prediction -->
-            <h3 class="title is-4" style="margin-top: 2rem;">Semantically Informed Future Prediction</h3>
-            <video
-              class="capabilities-video"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            >
-              <source src="./static/videos/capabilities-semantic.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3D-Belief -->
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-full-width">
-            <h2 class="title is-3">3D-Belief</h2>
-            <div class="content has-text-justified">
-              <p>
-                We propose a generative 3D world model, 3D-Belief, that learns to predict and sequentially update explicit 3D representations of a scene online.
-              </p>
-            </div>
-            <section class="hero teaser">
-                <div class="container is-max-desktop">
-                  <div class="content has-text-justified">
-                    <div class="video-container">
-                      <video autoplay controls muted loop playsinline width="100%">
-                        <source
-                          src="./static/videos/model.mp4"
-                          type="video/mp4"
-                        />
-                      </video>
-                    </div>
-                  </div>
-                </div>
-            </section>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Vision Results -->
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-full-width visual-quality-section">
-            <h2 class="title is-3">2D Visual Quality of Belief Prediction</h2>
-            <div class="content has-text-justified">
-              <p>
-                We compare the visual quality of 3D-Belief's predictions against state-of-the-art generative world models on unseen future viewpoints. Each panel shows, from left to right: <strong>Ground Truth</strong>, <strong>3D-Belief (Ours)</strong>, <strong>DFoT</strong>, and <strong>Gen3C</strong> (RE10K) / <strong>NWM</strong> (AI2-THOR). 3D-Belief produces predictions that are more spatially consistent and more faithful to the ground truth than the baselines.
-              </p>
-            </div>
-
-            <h4 class="title is-5 capabilities-heading" style="margin-top: 1rem;">RE10K</h4>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_re10k_episode_000006_000013_000062_000070.mp4" type="video/mp4" />
-            </video>
-            <div style="height: 1rem;"></div>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_re10k_episode_000092_000017_000069_000073.mp4" type="video/mp4" />
-            </video>
-            <div style="height: 1rem;"></div>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_re10k_episode_000131_000000_000037_000079.mp4" type="video/mp4" />
-            </video>
-            <div style="height: 1rem;"></div>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_re10k_episode_000181_000000_000050_000079.mp4" type="video/mp4" />
-            </video>
-            <div style="height: 1rem;"></div>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_re10k_episode_000187_000032_000072_000086.mp4" type="video/mp4" />
-            </video>
-            <div style="height: 1rem;"></div>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_re10k_episode_000658_000000_000057_000079.mp4" type="video/mp4" />
-            </video>
-
-            <h4 class="title is-5 capabilities-heading" style="margin-top: 1.5rem;">AI2-THOR</h4>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_spoc_episode_000057_000000_000005_000010.mp4" type="video/mp4" />
-            </video>
-            <div style="height: 1rem;"></div>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_spoc_episode_000062_000002_000007_000012.mp4" type="video/mp4" />
-            </video>
-            <div style="height: 1rem;"></div>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_spoc_episode_000070_000000_000005_000010.mp4" type="video/mp4" />
-            </video>
-            <div style="height: 1rem;"></div>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_spoc_episode_000076_000000_000005_000010.mp4" type="video/mp4" />
-            </video>
-            <div style="height: 1rem;"></div>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_spoc_episode_000097_000033_000038_000044.mp4" type="video/mp4" />
-            </video>
-            <div style="height: 1rem;"></div>
-            <video class="capabilities-video" autoplay muted loop playsinline preload="metadata">
-              <source src="./static/videos/comparisons/imagination_spoc_scene_114_s28_e39.mp4" type="video/mp4" />
-            </video>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3D-CORE -->
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-full-width">
-            <h2 class="title is-3">3D Object and Scene Imagination</h2>
-            <div class="content has-text-justified">
-              <p>
-                We introduce 3D-CORE (3D COntextual REasoning), a benchmark for evaluating whether 3D world models learn the kinds of belief reasoning that are directly required for embodied decision-making. 3D-CORE is designed to probe the capabilities that matter for downstream embodied planning directly: (1) <strong>spatial expansion</strong> beyond what is currently observed, (2) <strong>semantic reasoning</strong> grounded in 3D structure, and (3) <strong>long-horizon consistency</strong> under large viewpoint changes.
-              </p>
-
-              <figure style="margin-top: 1.5rem; text-align: center;">
-                <img
-                  src="./static/images/reasoning.png"
-                  alt="Overview of the 3D-CORE benchmark"
-                  style="max-width: 100%; height: auto; border-radius: 12px;"
-                />
-              </figure>
-            </div>
-            <h3 class="title is-4" style="margin-top: 1.25rem;">Object Completion</h3>
-            <video
-              class="capabilities-video"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            >
-              <source src="./static/videos/obj_comp_1.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <div style="height: 2rem;"></div>
-            <video
-              class="capabilities-video"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            >
-              <source src="./static/videos/obj_comp_2.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <div style="height: 2rem;"></div>
-            <video
-              class="capabilities-video"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            >
-              <source src="./static/videos/obj_comp_3.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <h3 class="title is-4" style="margin-top: 1.25rem;">Room Completion</h3>
-            <video
-              class="capabilities-video"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            >
-              <source src="./static/videos/room_comp_1.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <div style="height: 2rem;"></div>
-            <video
-              class="capabilities-video"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            >
-              <source src="./static/videos/room_comp_2.mp4" type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-            <h3 class="title is-4" style="margin-top: 1.25rem;">Object Permanence</h3>
-            <figure style="margin-top: 1.5rem; text-align: center;">
-              <img
-                src="./static/images/obj_perm.png"
-                alt="Qualitative Results of the the Object Permanence Task in 3D-CORE"
-                style="max-width: 100%; height: auto; border-radius: 12px;"
-              />
-            </figure>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Object Navigation Tasks -->
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-full-width">
-            <h2 class="title is-3">Belief-Guided Planning</h2>
-            <div class="content has-text-justified">
-              <p>
-                We use 3D-Belief as a mental 3D world model for navigation under partial observability. At each step, the agent updates its belief from egocentric RGB history and camera poses, samples multiple plausible 3D beliefs, imagines observations along candidate paths, and selects the rollout with the strongest open-vocabulary goal progress under uncertainty.
-              </p>
-            </div>
-            <div class="content has-text-justified">
-              <div class="video-container">
-                <video autoplay controls muted loop playsinline width="100%">
-                  <source
-                    src="./static/videos/planning.mp4"
-                    type="video/mp4"
-                  />
-                </video>
-              </div>
-            </div>
-            <h3 class="title is-4" style="margin-top: 1.25rem; margin-bottom: 1rem;">
-              Simulated Results
-            </h3>
-            <div class="content has-text-justified">
-              <p>
-                We evaluate 3D-Belief on open-vocabulary object navigation tasks in the AI2-THOR simulator, where an agent must find a specified target object in a previously unseen environment.
-              </p>
-            </div>
-            <div style="height: 2rem;"></div>
-            <div class="content has-text-justified">
-              <div class="video-container">
-                <video autoplay controls muted loop playsinline width="100%">
-                  <source
-                    src="./static/videos/simulated.mp4"
-                    type="video/mp4"
-                  />
-                </video>
-              </div>
-            </div>
-            <h3 class="title is-4" style="margin-top: 2rem;">Real-World Results</h3>
-            <div class="content has-text-justified">
-              <p>
-                We evaluate 3D-Belief on a real mobile manipulation platform (Hello Robot Stretch) in a mock apartment environment. Note that the environments,
-                objects, and target descriptions are all unseen during training, making this a real-world open-vocabulary object navigation setting.
-              </p>
-            </div>
-            <h4 class="title is-5" style="margin-top: 1.25rem;">Example Setup</h4>
-            <div class="container is-max-desktop">
-              <div class="columns is-centered">
-                <div class="column is-full-width">
-                  <img
-                    src="./static/images/real.png"
-                    class="capabilities-image"
-                    alt="Real-World Setup"
-                  />
-                </div>
-              </div>
-            </div>
-            <h4 class="title is-5" style="margin-top: 1.25rem;">Qualitative Results</h4>
-            <p class="subtitle is-5"
-              style="margin-bottom: 0px; min-height: 50px; display: flex; align-items: center; justify-content: flex-start; text-align: left;">
-              <span>Open-Vocabulary Object Navigation: <em>Search for a <strong>mug</strong>.</em></span>
-            </p>
-
-            <!-- Video Row -->
-            <div class="columns is-centered">
-              <!-- Video 1: 3D-Belief -->
-              <div class="column is-half">
-                <div class="video-container">
-                  <video autoplay controls muted loop playsinline width="100%">
-                    <source
-                      src="./static/videos/episode_6_3d_belief.mp4"
-                      type="video/mp4"
-                    />
-                  </video>
-                  <p
-                    class="caption has-text-centered"
-                    style="margin-top: 5px; font-size: 1.2rem; font-weight: 500;"
-                  >
-                    3D-Belief (Success)
-                  </p>
-                </div>
-              </div>
-
-              <!-- Video 2: Gemini-3.0 Agent -->
-              <div class="column is-half">
-                <div class="video-container">
-                  <video autoplay controls muted loop playsinline width="100%">
-                    <source
-                      src="./static/videos/episode_0_gemini.mp4"
-                      type="video/mp4"
-                    />
-                  </video>
-                  <p
-                    class="caption has-text-centered"
-                    style="margin-top: 5px; font-size: 1.2rem; font-weight: 500;"
-                  >
-                    Gemini-3.0 Agent (Failed - Collision)
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Conclusion Section -->
-    <section class="section">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column is-full-width">
-            <h2 class="title is-3">Conclusion</h2>
-            <div class="content has-text-justified">
-              <p>
-                In this work, we studied how generative world models can better support embodied reasoning and planning, 
-                and identified key capabilities for practical 3D belief modeling. We then proposed 3D-Belief, which predicts 
-                unseen regions in an explicit 3D representation from partial observations and updates this belief online. 
-                Experimental results on contextual reasoning and object navigation have shown that 3D-Belief improved both 
-                success rate and efficiency over existing generative world models. 
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- BibTeX -->
-    <section class="section" id="BibTeX">
-      <div class="container is-max-desktop content">
-        <h2 class="title">BibTeX</h2>
-        <pre><code>@misc{yin20263dbelief,
-        title={3D-Belief: Embodied Belief Inference via Generative 3D World Modeling},
-        author={Yin, Yifan and Wen, Zehao and Chen, Jieneng and Zheng, Zehan and Dai, Nanru and Shi, Haojun and Ye, Suyu and Huang, Aydan and Zhang, Zheyuan and Yuille, Alan and Xie, Jianwen and Tewari, Ayush and Shu, Tianmin},
-        year={2026},
-        url= {https://3d-belief.github.io/}
-}</code></pre>
-      </div>
-    </section>
+    </main>
+    <script type="module" src="./gallery_slider.js?v=gallery_v36_simplified_layout"></script>
   </body>
 </html>

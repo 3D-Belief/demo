@@ -1,0 +1,51 @@
+{
+  "assets": {
+    "belief": "imagined_kf0_to_kf1/gaussians/belief.ply",
+    "history": "imagined_kf0_to_kf1/gaussians/history.ply",
+    "incremental": "imagined_kf0_to_kf1/gaussians/incremental.ply"
+  },
+  "filter_stats": {
+    "belief": {
+      "input_count": 65536,
+      "kept_fraction": 1.0,
+      "output_count": 65536,
+      "removed_count": 0
+    },
+    "history": {
+      "input_count": 65536,
+      "kept_fraction": 1.0,
+      "output_count": 65536,
+      "removed_count": 0
+    },
+    "incremental": {
+      "input_count": 65536,
+      "kept_fraction": 1.0,
+      "output_count": 65536,
+      "removed_count": 0
+    }
+  },
+  "filters": {
+    "max_count": 0,
+    "max_scale": 0.0,
+    "min_voxel_count": 1,
+    "opacity_thresh": 0.0,
+    "voxel_size": 0.0
+  },
+  "reference_frame_idx": 0,
+  "shared_normalization": {
+    "center": [
+      0.5570595860481262,
+      0.0745527595281601,
+      2.0675318241119385
+    ],
+    "scale_factor": 2.3429129123687744,
+    "source": "filtered_augmented_gaussians",
+    "source_filter_stats": {
+      "input_count": 131072,
+      "kept_fraction": 1.0,
+      "output_count": 131072,
+      "removed_count": 0
+    }
+  },
+  "split": "imagined_kf0_to_kf1"
+}

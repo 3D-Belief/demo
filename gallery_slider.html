@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3D-Belief Interactive Reveal Results</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #ffffff;
+        color: #111111;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #ffffff;
+      }
+
+      .results {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        --input-col-width: max(220px, 26vw);
+        --viewer-col-width: calc(100vw - var(--input-col-width));
+        --selector-width: min(760px, calc(var(--viewer-col-width) - 96px));
+        background: #ffffff;
+      }
+
+      .demo-stage {
+        min-height: 0;
+        flex: 1 1 auto;
+        display: grid;
+        grid-template-columns: var(--input-col-width) minmax(0, 1fr);
+        gap: 0;
+        background: #000000;
+      }
+
+      .input-screen {
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
+        border-right: 1px solid #1a1a1a;
+        background: #f7f7f7;
+      }
+
+      .input-frame {
+        position: relative;
+        width: 100%;
+        max-width: min(360px, 100%);
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #111111;
+        box-shadow: 0 10px 32px rgba(0, 0, 0, 0.18);
+      }
+
+      .input-frame img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .input-badge {
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        padding: 2px 7px;
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0.62);
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.3;
+      }
+
+      .iframe-wrapper {
+        min-width: 0;
+        min-height: 0;
+        padding: 0;
+        background: #000000;
+      }
+
+      iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #000000;
+      }
+
+      .results-selector {
+        position: relative;
+        flex: 0 0 auto;
+        width: var(--selector-width);
+        --thumbnail-strip-width: 100%;
+        margin-left: calc(var(--input-col-width) + (var(--viewer-col-width) - var(--selector-width)) / 2);
+        margin-right: 0;
+        padding: 5px 0 8px;
+        background: #ffffff;
+      }
+
+      .reveal-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 10px;
+        width: min(560px, 100%);
+        margin: 0 auto 5px;
+        color: #303030;
+        font-size: clamp(11px, 0.9vw, 13px);
+        line-height: 1.1;
+      }
+
+      .demo-id {
+        display: none;
+        min-width: 30px;
+        color: #6b6b6b;
+        font-size: 11px;
+        font-weight: 700;
+        text-align: right;
+        letter-spacing: 0;
+      }
+
+      .reveal-row span {
+        white-space: nowrap;
+      }
+
+      .reveal-row input[type="range"] {
+        width: 100%;
+        accent-color: #111111;
+        cursor: pointer;
+      }
+
+      .viewer-instructions {
+        display: flex;
+        justify-content: center;
+        gap: clamp(16px, 3vw, 34px);
+        padding: 1px 0 7px;
+        color: #202020;
+        font-size: clamp(12px, 1vw, 15px);
+        line-height: 1.1;
+        white-space: nowrap;
+      }
+
+      .viewer-instructions span {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .viewer-instructions strong {
+        font-weight: 800;
+      }
+
+      .viewer-instructions svg {
+        width: 1em;
+        height: 1em;
+        stroke: currentColor;
+        stroke-width: 2.2;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .results-thumbnails {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-start;
+        overflow-x: auto;
+        width: var(--thumbnail-strip-width);
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 2px;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+      }
+
+      .results-thumbnails button {
+        position: relative;
+        display: block;
+        flex: 0 0 auto;
+        width: 68px;
+        height: 68px;
+        padding: 0;
+        border: 2px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        opacity: 0.55;
+        cursor: pointer;
+        transition: opacity 140ms ease, border-color 140ms ease, transform 140ms ease;
+      }
+
+      .results-thumbnails button:hover {
+        opacity: 0.88;
+      }
+
+      .results-thumbnails button[aria-pressed="true"] {
+        border-color: #111111;
+        opacity: 1;
+      }
+
+      .results-thumbnails img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 6px;
+        object-fit: cover;
+        background: #000000;
+      }
+
+      .thumb-id {
+        position: absolute;
+        left: 4px;
+        bottom: 4px;
+        min-width: 22px;
+        padding: 1px 4px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.58);
+        color: #ffffff;
+        font-size: 9px;
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: 0;
+        pointer-events: none;
+      }
+
+      .results-thumbnails button.previous-demo .thumb-id {
+        background: rgba(0, 0, 0, 0.72);
+      }
+
+      .results-thumbnails button.previous-demo-separator {
+        margin-right: 12px;
+      }
+
+      .results-thumbnails button.previous-demo-separator::after {
+        content: "";
+        position: absolute;
+        top: 8px;
+        right: -13px;
+        width: 1px;
+        height: 52px;
+        background: #d9d9d9;
+      }
+
+      .results-prev,
+      .results-next {
+        position: absolute;
+        top: calc(50% + 16px);
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border: 1px solid #d7d7d7;
+        border-radius: 999px;
+        background: #ffffff;
+        color: #111111;
+        font: inherit;
+        font-size: 25px;
+        line-height: 28px;
+        cursor: pointer;
+        transform: translateY(-50%);
+      }
+
+      .results-prev {
+        left: calc((100% - var(--thumbnail-strip-width)) / 2 - 46px);
+      }
+
+      .results-next {
+        right: calc((100% - var(--thumbnail-strip-width)) / 2 - 46px);
+      }
+
+      .results-prev:hover,
+      .results-next:hover {
+        background: #f1f1f1;
+      }
+
+      @media (max-width: 760px) {
+        .results {
+          --input-col-width: 0px;
+          --viewer-col-width: 100vw;
+          --selector-width: calc(100vw - 58px);
+        }
+
+        .demo-stage {
+          grid-template-columns: 1fr;
+          grid-template-rows: minmax(150px, 32vh) minmax(0, 1fr);
+        }
+
+        .input-screen {
+          padding: 8px;
+          border-right: 0;
+          border-bottom: 1px solid #1a1a1a;
+        }
+
+        .input-frame {
+          max-width: min(210px, 70vw);
+          border-radius: 7px;
+        }
+
+        .results-selector {
+          width: var(--selector-width);
+          margin: 0 auto;
+          padding: 7px 0 8px;
+        }
+
+        .reveal-row {
+          gap: 7px;
+          margin-bottom: 4px;
+          font-size: 11px;
+        }
+
+        .demo-id {
+          min-width: 24px;
+          font-size: 10px;
+        }
+
+        .viewer-instructions {
+          gap: 10px;
+          padding-bottom: 5px;
+          font-size: 11px;
+        }
+
+        .viewer-instructions span {
+          gap: 4px;
+        }
+
+        .results-thumbnails {
+          gap: 8px;
+        }
+
+        .results-thumbnails button {
+          width: 56px;
+          height: 56px;
+          border-radius: 7px;
+        }
+
+        .thumb-id {
+          left: 3px;
+          bottom: 3px;
+          min-width: 20px;
+          font-size: 8px;
+        }
+
+        .results-thumbnails button.previous-demo-separator {
+          margin-right: 8px;
+        }
+
+        .results-thumbnails button.previous-demo-separator::after {
+          right: -9px;
+          height: 44px;
+        }
+
+        .results-prev,
+        .results-next {
+          width: 28px;
+          height: 28px;
+          font-size: 21px;
+          line-height: 22px;
+        }
+
+        .results-prev {
+          left: -34px;
+        }
+
+        .results-next {
+          right: -34px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="results">
+      <div class="demo-stage">
+        <aside class="input-screen" aria-label="Input image">
+          <div class="input-frame">
+            <img id="input-image" alt="" />
+            <span class="input-badge">Input</span>
+          </div>
+        </aside>
+        <div class="iframe-wrapper"></div>
+      </div>
+      <div class="results-selector">
+        <div class="reveal-row" aria-label="Reveal imagined Gaussians">
+          <span id="demo-id" class="demo-id">#01</span>
+          <span>Observed</span>
+          <input id="reveal-slider" type="range" min="0" max="10" step="1" value="0" />
+          <span>Imagined</span>
+        </div>
+        <div class="viewer-instructions" aria-label="Viewer controls">
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 12c3.4-5.2 11.8-5.2 15.2-.4" />
+              <path d="M18.2 7.5v4.1h-4.1" />
+            </svg>
+            <strong>Left-click</strong> and drag to rotate
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2v20" />
+              <path d="M12 2l-3 3" />
+              <path d="M12 2l3 3" />
+              <path d="M12 22l-3-3" />
+              <path d="M12 22l3-3" />
+              <path d="M2 12h20" />
+              <path d="M2 12l3-3" />
+              <path d="M2 12l3 3" />
+              <path d="M22 12l-3-3" />
+              <path d="M22 12l-3 3" />
+            </svg>
+            <strong>Right-click</strong> and drag or <strong>WASD</strong> to move
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M16.5 16.5L21 21" />
+            </svg>
+            <strong>Scroll</strong> to zoom
+          </span>
+        </div>
+        <button class="results-prev" type="button" aria-label="Previous episode">&lsaquo;</button>
+        <div class="results-thumbnails" aria-label="Episodes"></div>
+        <button class="results-next" type="button" aria-label="Next episode">&rsaquo;</button>
+      </div>
+    </main>
+    <script type="module" src="./gallery_slider.js?v=gallery_v36_simplified_layout"></script>
+  </body>
+</html>
