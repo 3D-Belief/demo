@@ -50,32 +50,6 @@
         backdrop-filter: blur(16px);
       }
 
-      .pose-panel {
-        position: fixed;
-        top: 12px;
-        right: 12px;
-        z-index: 10;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        max-width: min(460px, calc(100vw - 120px));
-        min-height: 30px;
-        padding: 4px 7px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 6px;
-        background: rgba(8, 10, 14, 0.62);
-        color: rgba(255, 255, 255, 0.86);
-        font-size: 11px;
-        line-height: 1.2;
-        backdrop-filter: blur(16px);
-      }
-
-      .pose-status {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-
       .progress {
         position: fixed;
         left: 50%;
@@ -103,9 +77,6 @@
   <body>
     <canvas id="viewer"></canvas>
     <button class="model-tab" type="button">3D Belief</button>
-    <div class="pose-panel" aria-label="Current viewer pose">
-      <span id="pose-status" class="pose-status">zoom --</span>
-    </div>
     <div id="progress" class="progress" hidden>
       <div id="progress-label">Loading Gaussian scene...</div>
       <progress id="progress-bar" max="100" value="0"></progress>

@@ -147,8 +147,9 @@
 
       .viewer-instructions {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
-        gap: clamp(16px, 3vw, 34px);
+        gap: 5px clamp(16px, 3vw, 34px);
         padding: 1px 0 7px;
         color: #202020;
         font-size: clamp(12px, 1vw, 15px);
@@ -428,6 +429,17 @@
               <path d="M16.5 16.5L21 21" />
             </svg>
             <strong>Scroll</strong> to zoom
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16" />
+              <path d="M4 12h16" />
+              <path d="M4 18h16" />
+              <circle cx="9" cy="6" r="2" />
+              <circle cx="15" cy="12" r="2" />
+              <circle cx="11" cy="18" r="2" />
+            </svg>
+            Use the slider to reveal imagined geometry
           </span>
         </div>
         <button class="results-prev" type="button" aria-label="Previous episode">&lsaquo;</button>

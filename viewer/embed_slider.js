@@ -27,7 +27,6 @@ const canvas = document.getElementById("viewer");
 const progress = document.getElementById("progress");
 const progressBar = document.getElementById("progress-bar");
 const progressLabel = document.getElementById("progress-label");
-const poseStatus = document.getElementById("pose-status");
 
 let config = null;
 let poseDefaults = {};
@@ -39,7 +38,6 @@ let currentPose = null;
 let activeStep = -1;
 let loadGeneration = 0;
 let animationStarted = false;
-let lastPoseUiUpdate = 0;
 
 canvas.tabIndex = 0;
 
@@ -153,29 +151,6 @@ function createCamera(inputPose = null) {
   return { nextCamera, nextControls };
 }
 
-function formatNumber(value, digits = 3) {
-  return Number.isFinite(value) ? value.toFixed(digits) : "--";
-}
-
-function updatePoseStatus(force = false) {
-  if (!poseStatus || !controls || typeof controls.getPose !== "function") {
-    return;
-  }
-  const now = performance.now();
-  if (!force && now - lastPoseUiUpdate < 180) {
-    return;
-  }
-  lastPoseUiUpdate = now;
-  const pose = controls.getPose();
-  const target = pose.target || { x: 0, y: 0, z: 0 };
-  poseStatus.textContent = [
-    `zoom ${formatNumber(pose.radius)}`,
-    `alpha ${formatNumber(pose.alpha)}`,
-    `beta ${formatNumber(pose.beta)}`,
-    `target ${formatNumber(target.x, 2)}, ${formatNumber(target.y, 2)}, ${formatNumber(target.z, 2)}`,
-  ].join(" | ");
-}
-
 async function loadStep(stepIndex, { force = false } = {}) {
   if (!config?.steps?.length) {
     return;
@@ -219,7 +194,6 @@ async function loadStep(stepIndex, { force = false } = {}) {
   camera = nextCamera;
   controls = nextControls;
   setProgress(false);
-  updatePoseStatus(true);
   focusCanvas();
 }
 
@@ -230,7 +204,6 @@ function animate() {
   }
   if (controls && renderer && splatScene && camera) {
     controls.update();
-    updatePoseStatus();
     renderer.render(splatScene, camera);
   }
   requestAnimationFrame(animate);
