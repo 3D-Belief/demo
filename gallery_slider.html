@@ -32,7 +32,7 @@
         flex-direction: column;
         --input-col-width: max(220px, 26vw);
         --viewer-col-width: calc(100vw - var(--input-col-width));
-        --selector-width: min(1180px, calc(var(--viewer-col-width) - 48px));
+        --selector-width: min(760px, calc(var(--viewer-col-width) - 96px));
         background: #ffffff;
       }
 
@@ -146,14 +146,20 @@
       }
 
       .viewer-instructions {
+        position: relative;
+        left: 50%;
         display: flex;
         flex-wrap: nowrap;
         justify-content: center;
         gap: clamp(10px, 1.3vw, 24px);
+        width: max-content;
+        min-width: 100%;
+        margin: 0;
         padding: 1px 0 7px;
         color: #202020;
         font-size: clamp(10px, 0.82vw, 14px);
         line-height: 1.1;
+        transform: translateX(-50%);
         white-space: nowrap;
       }
 
@@ -329,10 +335,15 @@
         }
 
         .viewer-instructions {
+          left: auto;
           flex-wrap: wrap;
           gap: 10px;
+          width: 100%;
+          min-width: 0;
+          margin: 0 auto;
           padding-bottom: 5px;
           font-size: 11px;
+          transform: none;
         }
 
         .viewer-instructions span {
