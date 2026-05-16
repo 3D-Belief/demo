@@ -77,7 +77,6 @@ function createIframe(episode) {
   const iframe = document.createElement("iframe");
   iframe.src = iframeSrc(episode);
   iframe.title = "3D-Belief interactive Gaussian reveal viewer";
-  iframe.allow = "clipboard-write";
   iframe.addEventListener("load", () => {
     activeIframe = iframe;
     window.setTimeout(() => {

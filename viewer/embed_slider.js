@@ -27,7 +27,6 @@ const canvas = document.getElementById("viewer");
 const progress = document.getElementById("progress");
 const progressBar = document.getElementById("progress-bar");
 const progressLabel = document.getElementById("progress-label");
-const copyPoseButton = document.getElementById("copy-pose");
 const poseStatus = document.getElementById("pose-status");
 
 let config = null;
@@ -154,31 +153,6 @@ function createCamera(inputPose = null) {
   return { nextCamera, nextControls };
 }
 
-function currentPoseRecord() {
-  if (!controls || typeof controls.getPose !== "function") {
-    return null;
-  }
-  return {
-    [episodeName]: {
-      imagined_first: controls.getPose(),
-    },
-  };
-}
-
-function viewerStateRecord() {
-  return {
-    episode: episodeName,
-    asset_root: sliderAssetRoot,
-    active_step: activeStep,
-    active_step_ply: config?.steps?.[activeStep]?.ply || null,
-    render_resolution: RENDER_RESOLUTION,
-    camera_focal_fraction: CAMERA_FOCAL_FRACTION,
-    camera_roll_radians: CAMERA_ROLL_RADIANS,
-    world_up: WORLD_UP_RECORD,
-    url: window.location.href,
-  };
-}
-
 function formatNumber(value, digits = 3) {
   return Number.isFinite(value) ? value.toFixed(digits) : "--";
 }
@@ -200,33 +174,6 @@ function updatePoseStatus(force = false) {
     `beta ${formatNumber(pose.beta)}`,
     `target ${formatNumber(target.x, 2)}, ${formatNumber(target.y, 2)}, ${formatNumber(target.z, 2)}`,
   ].join(" | ");
-}
-
-async function copyPoseRecord() {
-  if (!copyPoseButton) {
-    return;
-  }
-  const posePatch = currentPoseRecord();
-  if (!posePatch) {
-    return;
-  }
-  const payload = {
-    pose_defaults_patch: posePatch,
-    viewer_state: viewerStateRecord(),
-  };
-  const text = JSON.stringify(payload, null, 2);
-  try {
-    await navigator.clipboard.writeText(text);
-    copyPoseButton.textContent = "Copied";
-  } catch {
-    window.prompt("Copy pose JSON:", text);
-    copyPoseButton.textContent = "Copy pose";
-  }
-  window.setTimeout(() => {
-    if (copyPoseButton) {
-      copyPoseButton.textContent = "Copy pose";
-    }
-  }, 1200);
 }
 
 async function loadStep(stepIndex, { force = false } = {}) {
@@ -291,7 +238,6 @@ function animate() {
 
 canvas.addEventListener("pointerdown", focusCanvas);
 canvas.addEventListener("pointerenter", focusCanvas);
-copyPoseButton?.addEventListener("click", copyPoseRecord);
 
 window.addEventListener("message", (event) => {
   if (event.origin !== window.location.origin) {
@@ -318,8 +264,6 @@ window.addEventListener("resize", () => {
 });
 
 window.__3DBELIEF_VIEWER__ = {
-  getPose: currentPoseRecord,
-  getViewerState: viewerStateRecord,
   loadStep,
 };
 

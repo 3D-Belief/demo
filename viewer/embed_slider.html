@@ -70,22 +70,6 @@
         backdrop-filter: blur(16px);
       }
 
-      .pose-panel button {
-        height: 22px;
-        padding: 0 8px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 5px;
-        background: rgba(255, 255, 255, 0.12);
-        color: #ffffff;
-        font: inherit;
-        font-weight: 700;
-        cursor: pointer;
-      }
-
-      .pose-panel button:hover {
-        background: rgba(255, 255, 255, 0.2);
-      }
-
       .pose-status {
         overflow: hidden;
         white-space: nowrap;
@@ -117,10 +101,9 @@
     </style>
   </head>
   <body>
-      <canvas id="viewer"></canvas>
+    <canvas id="viewer"></canvas>
     <button class="model-tab" type="button">3D Belief</button>
     <div class="pose-panel" aria-label="Current viewer pose">
-      <button id="copy-pose" type="button">Copy pose</button>
       <span id="pose-status" class="pose-status">zoom --</span>
     </div>
     <div id="progress" class="progress" hidden>
